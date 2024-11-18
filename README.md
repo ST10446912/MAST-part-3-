@@ -2,7 +2,7 @@
 # This  link below is  for the stuff needed for the assignment 
 https://github.com/ST10446912/MAST-part-3-
 
-Welcome To The Digital Menu App
+# Welcome To The Digital Menu App
 (A brief over View)
 
 Introduction
@@ -19,7 +19,7 @@ Conclusion
 
 To sum up, the Digital Menu App is a game-changer that improves diners' experiences and simplifies operations for eateries, much beyond being merely a contemporary convenience. These kinds of improvements will become more and more essential to the restaurant business as technology develops, raising the bar for efficiency, convenience, and patron happiness. With the help of the Digital Menu App, welcome to the future of eating.
 
-Pictures
+# Pictures
 
 Figure 1 
 
@@ -41,6 +41,7 @@ Figure 6
 
 
 
-Video on how the app works into action:
-Reference List:
+#Video on how the app works into action:
+
+# Reference List:
 W3Schools (1998). W3Schools Online Web Tutorials. [online] W3schools.com. Available at: https://www.w3schools.com/. Reactnative.directory. (2023). Available at: https://reactnative.directory/. Available at: https://reactnavigation.org/docs/getting-started/. https://reactnavigation.org/docs/getting-started/. Reactnavigation.org. (2021)
