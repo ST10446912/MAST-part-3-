@@ -19,22 +19,30 @@ To sum up, the Digital Menu App is a game-changer that improves diners' experien
 # Pictures
 
 Figure 1 
+![1](https://github.com/user-attachments/assets/5dc925d7-7629-48af-a161-d9c861093f5d)
+
 
 Figure 2
+![2](https://github.com/user-attachments/assets/21b78cbf-de71-4e7e-92bf-a1608a43a7b8)
 
 
 
 Figure 3 
+![3](https://github.com/user-attachments/assets/6d6b6222-9ee3-4840-bf1c-f3ddbd428c7b)
 
 
 Figure 4
+![4](https://github.com/user-attachments/assets/97ac09ba-4300-459e-95e0-c4a88924636f)
 
 
 
 Figure 5 
+![5](https://github.com/user-attachments/assets/b66a9f16-e810-4861-9add-c1ebda61ceab)
+
 
 
 Figure 6
+![6](https://github.com/user-attachments/assets/6145c740-82b6-41eb-aaa5-8e979b44937b)
 
 
 
