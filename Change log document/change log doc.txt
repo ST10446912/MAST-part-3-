@@ -1,0 +1,80 @@
+Mast   -	ST10446912	- 	Changelog
+
+26 September 2024
+added - login page,and homescreen
+
+29 September 2024 
+added new content to the word document
+
+30 September 2024
+tested everything
+done video on how the app works 
+
+2 October 2024
+added clients information
+added pictures
+
+3 October 2024
+tested everything again
+done video on how the app works again
+
+9 October 2024
+added way to delete orders
+added a way for the clients to see orders
+
+23 October 2024
+​
+Added a total menu items 
+Add a logout button that logs you out
+The homepage must show the complete menu 
+Average price by cost
+Add total cost for the course ordered
+On the login screen add the client also
+//Done
+
+24 October 2024
+Offer a search bar for courses thats for the courses ordered 
+Add another screen to show the whole menu alphabetical order horizontal list
+Filtered menu
+Chose which client your are talking about,chose date add a tick box  
+Add a save button 
+Each component must include a name course and a check box
+Say if it's a 3 or 5 course meal and it must save on the screen
+//Done
+
+31 October 2024
+How i done the structure for the app to work in visual lstudio code
+[assest]
+
+
+21 November 2024
+made the video
+
+
+            - images
+      [components]
+            - MenuItem.tsx
+      [screens]
+            - LoginScreen.tsx
+            - HomeScreen.tsx
+            - EnterScreen.tsx
+            - ViewScreen.tsx
+      [util]
+            - courseList.ts
+            - loadMenu.ts
+            - calculations.ts
+            - styles.ts
+            - loadPreparedMenu.ts
+      App.tsx
+            only the navigation code 
+
+
+Changelog
+added:			    New Features
+fixed:			    Bug fix
+chanaged:			  Feature changed
+deprecated:		  New deprection
+removed: 			  Feature removal
+security:			  Security fix
+performance:		Performance improvement
+other:			    Other

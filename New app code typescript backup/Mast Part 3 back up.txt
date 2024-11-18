@@ -1,0 +1,691 @@
+Mast Part 3 back up
+====================================================================================================================
+Components folder
+MenuItem.tsx
+// components/MenuItem.tsx
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import styles from '../utils/styles'; 
+
+type MenuItemProps = {
+  item: {
+    dishName: string;
+    course: string;
+    description: string;
+    price: number;
+  };
+  onRemove: () => void;
+};
+
+const MenuItem: React.FC<MenuItemProps> = ({ item, onRemove }) => (
+  <View style={styles.menuItem}>
+    <Text style={styles.menuText}>{item.dishName}</Text>
+    <Text style={styles.courseText}>{item.course}</Text>
+    <Text style={styles.descriptionText}>{item.description}</Text>
+    <Text style={styles.priceText}>R{item.price.toFixed(2)}</Text>
+    <TouchableOpacity style={styles.removeButton} onPress={onRemove}>
+      <Text style={styles.removeButtonText}>Remove</Text>
+    </TouchableOpacity>
+  </View>
+);
+
+export default MenuItem;
+
+====================================================================================================================
+screens folder
+// screens/ClientInformationScreen.tsx
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, Button } from 'react-native';
+import styles from '../utils/styles';
+
+type ClientInfo = {
+  name: string;
+  contact: string;
+  whatIOrdered: string; 
+};
+
+type ClientInformationScreenProps = {
+  clientInfo: ClientInfo | null;
+  setClientInfo: (info: ClientInfo) => void;
+};
+
+const ClientInformationScreen: React.FC<ClientInformationScreenProps> = ({ clientInfo, setClientInfo }) => {
+  const [name, setName] = useState(clientInfo?.name || '');
+  const [contact, setContact] = useState(clientInfo?.contact || '');
+  const [whatIOrdered, setWhatIOrdered] = useState(clientInfo?.whatIOrdered || ''); // State for "What I Ordered"
+
+  useEffect(() => {
+    setName(clientInfo?.name || '');
+    setContact(clientInfo?.contact || '');
+    setWhatIOrdered(clientInfo?.whatIOrdered || '');
+  }, [clientInfo]);
+
+  const handleSave = () => {
+    setClientInfo({ name, contact, whatIOrdered }); // Save all fields, including "What I Ordered"
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Client Information</Text>
+      <TextInput
+        placeholder="Client Name"
+        value={name}
+        onChangeText={setName}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Contact Number"
+        value={contact}
+        onChangeText={setContact}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="What I Ordered"
+        value={whatIOrdered}
+        onChangeText={setWhatIOrdered}
+        style={styles.input}
+      />
+      <Button title="Save" onPress={handleSave} />
+    </View>
+  );
+};
+
+export default ClientInformationScreen;
+====================================================================================================================
+HomesScreen.tsx
+// screens/HomeScreen.tsx
+import React, { useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import styles from '../utils/styles';
+import { NavigationProp } from '@react-navigation/native';
+
+type MenuItem = {
+  dishName: string;
+  course: string;
+  description: string;
+  price: number;
+};
+
+type ClientInfo = {
+  name: string;
+  contact: string;
+  date?: string; 
+};
+
+interface HomeScreenProps {
+  navigation: NavigationProp<any, 'Home'>; 
+  menu: MenuItem[];
+  clientInfo: ClientInfo | null;
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation, menu, clientInfo }) => {
+  const total = menu.reduce((sum, item) => sum + item.price, 0);
+  const average = menu.length > 0 ? total / menu.length : 0;
+  const [selectedCourse, setSelectedCourse] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const uniqueCourses = new Set(menu.map(item => item.course));
+  const courseCount = uniqueCourses.size;
+
+  const filteredMenu = selectedCourse
+    ? menu.filter((item) => item.course === selectedCourse)
+    : menu.filter((item) => item.dishName.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Chef's Menu</Text>
+      <Text style={styles.subheader}>Total Menu Items: {menu.length}</Text>
+      <Text style={styles.subheader}>Total Price: R{total.toFixed(2)}</Text>
+      <Text style={styles.subheader}>Average Price: R{average.toFixed(2)}</Text>
+      <Text style={styles.subheader}>Unique Courses: {courseCount}</Text>
+
+      {/* Course Filter */}
+      <Picker
+        selectedValue={selectedCourse}
+        onValueChange={(itemValue) => setSelectedCourse(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="Select Course" value="" />
+        <Picker.Item label="Starter" value="Starter" />
+        <Picker.Item label="Main" value="Main" />
+        <Picker.Item label="Dessert" value="Dessert" />
+        <Picker.Item label="Appetizer" value="Appetizer" />
+        <Picker.Item label="Salad" value="Salad" />
+        <Picker.Item label="Soup" value="Soup" />
+        <Picker.Item label="Side Dish" value="Side Dish" />
+        <Picker.Item label="Sandwich" value="Sandwich" />
+        <Picker.Item label="Pasta" value="Pasta" />
+        <Picker.Item label="Grill" value="Grill" />
+        <Picker.Item label="Beverage" value="Beverage" />
+      </Picker>
+
+      {/* Search Bar */}
+      <TextInput
+        style={styles.input}
+        placeholder="Search by dish name"
+        placeholderTextColor="#aaa"
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+
+      <FlatList
+        data={filteredMenu}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.menuItem}>
+            <Text style={styles.menuText}>{item.dishName}</Text>
+            <Text style={styles.courseText}>{item.course}</Text>
+            <Text style={styles.descriptionText}>{item.description}</Text>
+            <Text style={styles.priceText}>R{item.price.toFixed(2)}</Text>
+          </View>
+        )}
+      />
+
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Menu Management')}>
+        <Text style={styles.addButtonText}>Manage Menu</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Client Information')}>
+        <Text style={styles.addButtonText}>Client Information</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Menu Overview')}>
+        <Text style={styles.addButtonText}>Menu Overview</Text>
+      </TouchableOpacity>
+
+      {clientInfo && (
+        <View style={styles.clientInfoContainer}>
+          <Text style={styles.header}>Client Information</Text>
+          <Text style={styles.clientInfoText}>Name: {clientInfo.name}</Text>
+          <Text style={styles.clientInfoText}>Contact: {clientInfo.contact}</Text>
+          <Text style={styles.clientInfoText}>Date of Order: {clientInfo.date}</Text>
+        </View>
+      )}
+
+      <TouchableOpacity style={styles.logoutButton} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.addButtonText}>Logout</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+export default HomeScreen;
+====================================================================================================================
+LoginScreen.tsx
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { NavigationProp } from '@react-navigation/native';
+import styles from '../utils/styles'; 
+
+const LoginScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [clientName, setClientName] = useState('');
+  const [cheffName, setCheffName] = useState('');
+
+  const handleLogin = () => {
+    if (username && password && clientName) {
+      
+      const userRole = cheffName ? 'Chef' : 'Client';
+      Alert.alert('Login Successful', `Welcome ${userRole}, ${clientName}`);
+
+      
+      navigation.navigate('Home', { clientName, userRole });
+    } else {
+      Alert.alert('Error', 'Please enter username, password, and client name');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Login</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Client Name"
+        value={clientName}
+        onChangeText={setClientName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Chef Name (Leave empty if you're a client)"
+        value={cheffName}
+        onChangeText={setCheffName}
+      />
+      <TouchableOpacity style={styles.addButton} onPress={handleLogin}>
+        <Text style={styles.addButtonText}>Log In</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+export default LoginScreen;
+
+====================================================================================================================
+MenuManagementScreen.tsx
+// screens/MenuManagementScreen.tsx
+import React, { useState } from 'react';
+import { View, Text, TextInput, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import styles from '../utils/styles';
+import { NavigationProp } from '@react-navigation/native';
+
+type MenuItem = {
+  dishName: string;
+  course: string;
+  description: string;
+  price: number;
+  clientName: string; // Added clientName to the menu item type
+};
+
+interface MenuManagementScreenProps {
+  navigation: NavigationProp<any, 'Menu Management'>;
+  menu: MenuItem[];
+  addMenuItem: (item: MenuItem) => void;
+  removeMenuItem: (index: number) => void;
+}
+
+const MenuManagementScreen: React.FC<MenuManagementScreenProps> = ({ navigation, menu, addMenuItem, removeMenuItem }) => {
+  const [dishName, setDishName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [course, setCourse] = useState<string>('');
+  const [price, setPrice] = useState<string>('');
+  const [clientName, setClientName] = useState<string>(''); // Added state for Client Name
+
+  const handleAddItem = () => {
+    if (!dishName || !description || !course || !price || !clientName) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    const newItem: MenuItem = {
+      dishName,
+      description,
+      course,
+      price: parseFloat(price),
+      clientName,
+    };
+    addMenuItem(newItem);
+    Alert.alert('Success', 'Menu Item Added Successfully');
+    setDishName('');
+    setDescription('');
+    setCourse('');
+    setPrice('');
+    setClientName(''); // Reset Client Name
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Manage Menu</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Client Name"
+        placeholderTextColor="#aaa"
+        value={clientName}
+        onChangeText={setClientName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Dish Name"
+        placeholderTextColor="#aaa"
+        value={dishName}
+        onChangeText={setDishName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Description"
+        placeholderTextColor="#aaa"
+        value={description}
+        onChangeText={setDescription}
+      />
+      <Picker selectedValue={course} onValueChange={(itemValue) => setCourse(itemValue)} style={styles.picker}>
+        <Picker.Item label="Select Course" value="" />
+        <Picker.Item label="Starter" value="Starter" />
+        <Picker.Item label="Main" value="Main" />
+        <Picker.Item label="Dessert" value="Dessert" />
+        <Picker.Item label="Appetizer" value="Appetizer" />
+        <Picker.Item label="Salad" value="Salad" />
+        <Picker.Item label="Soup" value="Soup" />
+        <Picker.Item label="Side Dish" value="Side Dish" />
+        <Picker.Item label="Sandwich" value="Sandwich" />
+        <Picker.Item label="Pasta" value="Pasta" />
+        <Picker.Item label="Grill" value="Grill" />
+        <Picker.Item label="Beverage" value="Beverage" />
+      </Picker>
+      <TextInput
+        style={styles.input}
+        placeholder="Price"
+        placeholderTextColor="#aaa"
+        value={price}
+        onChangeText={setPrice}
+        keyboardType="numeric"
+      />
+      <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
+        <Text style={styles.addButtonText}>Add Menu Item</Text>
+      </TouchableOpacity>
+
+      <FlatList
+        data={menu}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <View style={styles.menuItem}>
+            <Text style={styles.menuText}>{item.dishName}</Text>
+            <Text style={styles.courseText}>{item.course}</Text>
+            <Text style={styles.descriptionText}>{item.description}</Text>
+            <Text style={styles.priceText}>R{item.price.toFixed(2)}</Text>
+            <Text style={styles.clientText}>Client: {item.clientName}</Text> 
+            <TouchableOpacity
+              style={styles.removeButton}
+              onPress={() => removeMenuItem(index)}
+            >
+              <Text style={styles.removeButtonText}>Remove</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+
+      <TouchableOpacity style={styles.logoutButton} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.addButtonText}>Logout</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+export default MenuManagementScreen;
+====================================================================================================================
+MenuOverviewScreen.tsx
+// screens/MenuOverviewScreen.tsx
+import React from 'react';
+import { View, Text, FlatList } from 'react-native';
+import styles from '../utils/styles'; 
+
+type MenuItem = {
+  dishName: string;
+  course: string;
+  description: string;
+  price: number;
+};
+
+type MenuOverviewScreenProps = {
+  menu: MenuItem[];
+};
+
+const MenuOverviewScreen: React.FC<MenuOverviewScreenProps> = ({ menu }) => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Menu Overview</Text>
+      <FlatList
+        data={menu}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.menuItem}>
+            <Text style={styles.menuText}>{item.dishName}</Text>
+            <Text style={styles.courseText}>{item.course}</Text>
+            <Text style={styles.descriptionText}>{item.description}</Text>
+            <Text style={styles.priceText}>R{item.price.toFixed(2)}</Text>
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
+export default MenuOverviewScreen;
+====================================================================================================================
+utils folder
+calculations.ts
+// utils/calculations.ts
+export const calculateTotal = (menu: { price: number }[]) => {
+    return menu.reduce((total, item) => total + item.price, 0);
+  };
+  
+  export const calculateAverage = (menu: { price: number }[]) => {
+    if (menu.length === 0) return 0;
+    return calculateTotal(menu) / menu.length;
+  };
+====================================================================================================================
+courseList.ts
+export const courseList = [
+  'Starter',
+  'Main',
+  'Dessert',
+  'Appetizer',
+  'Salad',
+  'Soup',
+  'Side Dish',
+  'Sandwich',
+  'Pasta',
+  'Grill',
+  'Beverage',
+];
+==========================================================================================import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  header: {
+    fontSize: 26, 
+    fontWeight: 'bold',
+    marginBottom: 24, 
+    color: '#333', 
+  },
+  subheader: {
+    fontSize: 20,
+    marginVertical: 12,
+    color: '#555', 
+  },
+  input: {
+    height: 45, 
+    borderColor: '#ddd', 
+    borderWidth: 1,
+    borderRadius: 5, 
+    marginBottom: 16,
+    paddingHorizontal: 12, 
+    fontSize: 16, 
+  },
+  menuItem: {
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee', 
+  },
+  menuText: {
+    fontSize: 18,
+    color: '#333', 
+  },
+  courseText: {
+    fontSize: 16,
+    color: '#777', 
+  },
+  descriptionText: {
+    fontSize: 14,
+    color: '#666', 
+  },
+  priceText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#28a745', 
+  },
+  addButton: {
+    backgroundColor: '#007BFF',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 5,
+    marginTop: 16,
+    alignItems: 'center', 
+  },
+  addButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18, 
+  },
+  removeButton: {
+    backgroundColor: '#dc3545',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  removeButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 5, 
+    marginBottom: 16,
+    fontSize: 16, 
+  },
+  logoutButton: {
+    backgroundColor: '#FF6347', 
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 5,
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 18, 
+  },
+});
+
+export default styles;
+
+
+====================================================================================================================
+  
+
+app.tsx
+
+import React, { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LoginScreen from './screens/LoginScreen';
+import HomeScreen from './screens/HomeScreen';
+import MenuManagementScreen from './screens/MenuManagementScreen';
+import ClientInformationScreen from './screens/ClientInformationScreen';
+import MenuOverviewScreen from './screens/MenuOverviewScreen';
+
+// Define types directly
+type MenuItem = {
+  dishName: string;
+  course: string;
+  description: string;
+  price: number;
+  clientName: string;
+};
+
+type ClientInfo = {
+  name: string;
+  contact: string;
+  whatIOrdered: string; 
+};
+
+const Stack = createStackNavigator();
+
+const App = () => {
+  const [menu, setMenu] = useState<MenuItem[]>([]);
+  const [clientInfo, setClientInfo] = useState<ClientInfo | null>(null);
+
+  const addMenuItem = (item: MenuItem) => {
+    setMenu((prevMenu) => [...prevMenu, item]);
+  };
+
+  const removeMenuItem = (index: number) => {
+    setMenu((prevMenu) => prevMenu.filter((_, i) => i !== index));
+  };
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} />
+        
+        <Stack.Screen name="Home">
+          {(props) => <HomeScreen {...props} menu={menu} clientInfo={clientInfo} />}
+        </Stack.Screen>
+        
+        <Stack.Screen name="Menu Management">
+          {(props) => (
+            <MenuManagementScreen
+              {...props}
+              menu={menu}
+              addMenuItem={addMenuItem}
+              removeMenuItem={removeMenuItem}
+            />
+          )}
+        </Stack.Screen>
+        
+        <Stack.Screen name="Client Information">
+          {(props) => (
+            <ClientInformationScreen {...props} clientInfo={clientInfo} setClientInfo={setClientInfo} />
+          )}
+        </Stack.Screen>
+        
+        <Stack.Screen name="Menu Overview">
+          {(props) => <MenuOverviewScreen {...props} menu={menu} />}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default App;
+========================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

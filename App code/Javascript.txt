@@ -1,0 +1,365 @@
+//JavaScript//
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Picker } from '@react-native-picker/picker';
+
+const Stack = createStackNavigator();
+
+// Login Screen
+const LoginScreen = ({ navigation }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    if (username && password) {
+      navigation.navigate('Home');
+    } else {
+      Alert.alert('Error', 'Please enter username and password');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Login</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        placeholderTextColor="#aaa"
+        value={username}
+        onChangeText={setUsername}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        placeholderTextColor="#aaa"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TouchableOpacity style={styles.addButton} onPress={handleLogin}>
+        <Text style={styles.addButtonText}>Log In</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+// Home Screen (with filtering)
+const HomeScreen = ({ navigation, menu, clientInfo }) => {
+  const total = menu.reduce((sum, item) => sum + item.price, 0);
+  const average = menu.length > 0 ? total / menu.length : 0;
+  const [selectedCourse, setSelectedCourse] = useState('');
+
+  const filteredMenu = selectedCourse
+    ? menu.filter((item) => item.course === selectedCourse)
+    : menu;
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Chef's Menu</Text>
+      <Text style={styles.subheader}>Total Price: R{total.toFixed(2)}</Text>
+      <Text style={styles.subheader}>Average Price: R{average.toFixed(2)}</Text>
+
+      {/* Course Filter */}
+      <Picker selectedValue={selectedCourse} onValueChange={setSelectedCourse} style={styles.picker}>
+        <Picker.Item label="Select Course" value="" />
+        <Picker.Item label="Starter" value="Starter" />
+        <Picker.Item label="Main" value="Main" />
+        <Picker.Item label="Dessert" value="Dessert" />
+        <Picker.Item label="Appetizer" value="Appetizer" />
+        <Picker.Item label="Salad" value="Salad" />
+        <Picker.Item label="Soup" value="Soup" />
+        <Picker.Item label="Side Dish" value="Side Dish" />
+        <Picker.Item label="Sandwich" value="Sandwich" />
+        <Picker.Item label="Pasta" value="Pasta" />
+        <Picker.Item label="Grill" value="Grill" />
+        <Picker.Item label="Beverage" value="Beverage" />
+      </Picker>
+
+      <FlatList
+        data={filteredMenu}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.menuItem}>
+            <Text style={styles.menuText}>{item.dishName}</Text>
+            <Text style={styles.courseText}>{item.course}</Text>
+            <Text style={styles.descriptionText}>{item.description}</Text>
+            <Text style={styles.priceText}>R{item.price.toFixed(2)}</Text>
+          </View>
+        )}
+      />
+
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Menu Management')}>
+        <Text style={styles.addButtonText}>Manage Menu</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Client Information')}>
+        <Text style={styles.addButtonText}>Client Information</Text>
+      </TouchableOpacity>
+
+      {clientInfo && (
+        <View style={styles.clientInfoContainer}>
+          <Text style={styles.header}>Client Information</Text>
+          <Text style={styles.clientInfoText}>Name: {clientInfo.name}</Text>
+          <Text style={styles.clientInfoText}>Contact: {clientInfo.contact}</Text>
+          <Text style={styles.clientInfoText}>Date of Order: {clientInfo.date}</Text>
+        </View>
+      )}
+    </View>
+  );
+};
+
+// Menu Management Screen (for chef to add and remove items)
+const MenuManagementScreen = ({ navigation, menu, addMenuItem, removeMenuItem }) => {
+  const [dishName, setDishName] = useState('');
+  const [description, setDescription] = useState('');
+  const [course, setCourse] = useState('');
+  const [price, setPrice] = useState('');
+
+  const handleAddItem = () => {
+    if (!dishName || !description || !course || !price) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    const newItem = { dishName, description, course, price: parseFloat(price) };
+    addMenuItem(newItem);
+    Alert.alert('Success', 'Menu Item Added Successfully');
+    setDishName('');
+    setDescription('');
+    setCourse('');
+    setPrice('');
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Manage Menu</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Dish Name"
+        placeholderTextColor="#aaa"
+        value={dishName}
+        onChangeText={setDishName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Description"
+        placeholderTextColor="#aaa"
+        value={description}
+        onChangeText={setDescription}
+      />
+      <Picker selectedValue={course} onValueChange={setCourse} style={styles.picker}>
+        <Picker.Item label="Select Course" value="" />
+        <Picker.Item label="Starter" value="Starter" />
+        <Picker.Item label="Main" value="Main" />
+        <Picker.Item label="Dessert" value="Dessert" />
+        <Picker.Item label="Appetizer" value="Appetizer" />
+        <Picker.Item label="Salad" value="Salad" />
+        <Picker.Item label="Soup" value="Soup" />
+        <Picker.Item label="Side Dish" value="Side Dish" />
+        <Picker.Item label="Sandwich" value="Sandwich" />
+        <Picker.Item label="Pasta" value="Pasta" />
+        <Picker.Item label="Grill" value="Grill" />
+        <Picker.Item label="Beverage" value="Beverage" />
+      </Picker>
+      <TextInput
+        style={styles.input}
+        placeholder="Price"
+        placeholderTextColor="#aaa"
+        value={price}
+        onChangeText={setPrice}
+        keyboardType="numeric"
+      />
+      <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
+        <Text style={styles.addButtonText}>Add to Menu</Text>
+      </TouchableOpacity>
+
+      <FlatList
+        data={menu}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <View style={styles.menuItem}>
+            <Text style={styles.menuText}>{item.dishName}</Text>
+            <Text style={styles.courseText}>{item.course}</Text>
+            <Text style={styles.descriptionText}>{item.description}</Text>
+            <Text style={styles.priceText}>R{item.price.toFixed(2)}</Text>
+            <TouchableOpacity onPress={() => removeMenuItem(index)}>
+              <Text style={styles.removeButtonText}>Remove</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
+// Client Information Screen
+const ClientScreen = ({ navigation, saveClientInfo }) => {
+  const [clientName, setClientName] = useState('');
+  const [clientContact, setClientContact] = useState('');
+  const [clientDateOfOrder, setClientDateOfOrder] = useState('');
+
+  const handleSaveClient = () => {
+    if (!clientName || !clientContact || !clientDateOfOrder) {
+      Alert.alert('Error', 'Please fill in all fields');
+    } else {
+      const clientInfo = { name: clientName, contact: clientContact, date: clientDateOfOrder };
+      saveClientInfo(clientInfo);
+      Alert.alert('Success', 'Client Information Saved');
+      navigation.goBack();
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Client Information</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Client Name"
+        placeholderTextColor="#aaa"
+        value={clientName}
+        onChangeText={setClientName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Client Contact"
+        placeholderTextColor="#aaa"
+        value={clientContact}
+        onChangeText={setClientContact}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Date of Order"
+        placeholderTextColor="#aaa"
+        value={clientDateOfOrder}
+        onChangeText={setClientDateOfOrder}
+      />
+
+      <TouchableOpacity style={styles.addButton} onPress={handleSaveClient}>
+        <Text style={styles.addButtonText}>Save</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+// Main App Component
+const App = () => {
+  const [menu, setMenu] = useState([]);
+  const [clientInfo, setClientInfo] = useState(null);
+
+  const addMenuItem = (item) => {
+    setMenu([...menu, item]);
+  };
+
+  const removeMenuItem = (index) => {
+    setMenu(menu.filter((_, i) => i !== index));
+  };
+
+  const saveClientInfo = (info) => {
+    setClientInfo(info);
+  };
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home">
+          {props => (
+            <HomeScreen {...props} menu={menu} clientInfo={clientInfo} />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="Menu Management">
+          {props => (
+            <MenuManagementScreen
+              {...props}
+              menu={menu}
+              addMenuItem={addMenuItem}
+              removeMenuItem={removeMenuItem}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="Client Information">
+          {props => (
+            <ClientScreen {...props} saveClientInfo={saveClientInfo} />
+          )}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  subheader: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  input: {
+    borderColor: '#ddd',
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  addButton: {
+    backgroundColor: '#28a745',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  menuItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  menuText: {
+    fontSize: 18,
+  },
+  courseText: {
+    fontSize: 16,
+    color: '#666',
+  },
+  descriptionText: {
+    fontSize: 14,
+    color: '#888',
+  },
+  priceText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  removeButtonText: {
+    color: '#ff0000',
+    marginTop: 5,
+  },
+  picker: {
+    marginBottom: 10,
+  },
+  clientInfoContainer: {
+    marginTop: 20,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+  },
+  clientInfoText: {
+    fontSize: 16,
+  },
+});
+
+export default App;
