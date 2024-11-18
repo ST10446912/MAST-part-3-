@@ -1,7 +1,4 @@
 
-# This  link below is  for the stuff needed for the assignment 
-https://github.com/ST10446912/MAST-part-3-
-
 # Welcome To The Digital Menu App
 (A brief over View)
 
