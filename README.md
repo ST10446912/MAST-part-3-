@@ -45,13 +45,15 @@ Figure 6
 ![6](https://github.com/user-attachments/assets/6145c740-82b6-41eb-aaa5-8e979b44937b)
 
 
-
 # Video on how the app works into action:
-From stream link:
+- From stream link:
 https://advtechonline-my.sharepoint.com/:v:/g/personal/st10446912_vcconnect_edu_za/EdGaOzXkRKxGoQWzXmlCCTIBRfYz8Z3ijlaQXgLymztRZw?e=aDWo8Y&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D
 
-From youtube link:
+- From youtube link:
 https://youtu.be/fT0rFK9zDmw
 
 # Reference List:
-W3Schools (1998). W3Schools Online Web Tutorials. [online] W3schools.com. Available at: https://www.w3schools.com/. Reactnative.directory. (2023). Available at: https://reactnative.directory/. Available at: https://reactnavigation.org/docs/getting-started/. https://reactnavigation.org/docs/getting-started/. Reactnavigation.org. (2021)
+- W3Schools (1998). W3Schools Online Web Tutorials. [online] W3schools.com. Available at: https://www.w3schools.com/.
+- Reactnative.directory. (2023). Available at: https://reactnative.directory/.
+- Reactnavigation.org. (2021) Available at: https://reactnavigation.org/docs/getting-started/. 
+
